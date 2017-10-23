@@ -401,7 +401,17 @@ namespace crow
             }
 
             if (res.code >= 400 && res.body.empty())
+            {
                 res.body = statusCodes[res.code].substr(9);
+                if(!res.headers.count("content-type"))
+                {
+                    static std::string content_type_tag = "Content-type: ";
+                    static std::string content_type_value = "text/html";
+                    buffers_.emplace_back(content_type_tag.data(), content_type_tag.size());
+                    buffers_.emplace_back(content_type_value.data(), content_type_value.size());
+                    buffers_.emplace_back(crlf.data(), crlf.size());
+                }
+            }
 
             for(auto& kv : res.headers)
             {
